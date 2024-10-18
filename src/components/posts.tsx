@@ -21,6 +21,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
+import Post from "./post"
+import { Button } from "./ui/button"
 import { Textarea } from "./ui/textarea"
 
 const defaultValues = {
@@ -86,35 +88,52 @@ const Posts = () => {
   })
 
   const submit = async (post: InsertPost) => {
+    if (post?.content?.trim() === "") return
+
     await createPostMutation.mutateAsync(post)
+
+    form.reset(defaultValues)
   }
 
   return (
     <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(submit)}>
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Textarea {...field} value={field.value ?? ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <button disabled={form.formState.isSubmitting} type="submit">
-            Post
-          </button>
-        </form>
-      </Form>
-      {posts?.pages.map((page, index) =>
-        page.posts.map((post) => <div key={post.id}>{post.content}</div>)
-      )}
-      {/* <button onClick={loadMorePosts}>Load more</button> */}
+      <div className="">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(submit)}>
+            <div className="flex flex-col gap-2">
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="sr-only">Name</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Express your rant"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="self-end">
+                <Button disabled={form.formState.isSubmitting} type="submit">
+                  Post
+                </Button>
+              </div>
+            </div>
+          </form>
+        </Form>
+      </div>
+      <div className="mt-5 flex flex-col gap-3">
+        {posts?.pages.map((page, index) =>
+          page.posts.map((post) => <Post key={post.id} post={post} />)
+        )}
+      </div>
+
+      <button onClick={() => fetchNextPage()}>Load more</button>
     </div>
   )
 }
