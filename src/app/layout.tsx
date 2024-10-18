@@ -1,3 +1,5 @@
+import QueryProvider from "@/components/query-provider"
+import StickyHeader from "@/components/sticky-header"
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
@@ -29,7 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-background">{children}</div>
+        <QueryProvider>
+          <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col bg-background px-3">
+            <StickyHeader />
+            <main>{children}</main>
+          </div>
+        </QueryProvider>
       </body>
     </html>
   )

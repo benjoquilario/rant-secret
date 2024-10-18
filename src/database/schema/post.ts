@@ -1,3 +1,4 @@
+import { InferSelectModel } from "drizzle-orm"
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 
 export const posts = pgTable("posts", {
@@ -6,3 +7,5 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 })
+
+export type Posts = InferSelectModel<typeof posts>
