@@ -3,9 +3,11 @@
 import { db } from "@/database"
 import { posts } from "@/database/schema"
 import { type InsertPost, insertPostSchema } from "@/lib/validation/post"
+import { Filter } from "bad-words"
 import { desc } from "drizzle-orm"
 
 export const createPost = async (data: InsertPost) => {
+  const filter = new Filter()
   const validatedFields = insertPostSchema.safeParse(data)
 
   if (!validatedFields.success) {
@@ -18,7 +20,14 @@ export const createPost = async (data: InsertPost) => {
   try {
     const { content } = validatedFields.data
 
-    const newPosts = await db.insert(posts).values({ content }).returning()
+    filter.addWords("damn", "hell", "tangina", "gago", "tarantado", "putangina")
+
+    const cleanContent = filter.clean(content!)
+
+    const newPosts = await db
+      .insert(posts)
+      .values({ content: cleanContent })
+      .returning()
 
     return {
       data: newPosts[0],

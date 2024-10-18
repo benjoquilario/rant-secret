@@ -8,7 +8,7 @@ import * as React from "react"
 export default function StickyHeader() {
   const [scrolled, setScrolled] = React.useState(false)
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20
       if (isScrolled !== scrolled) {
